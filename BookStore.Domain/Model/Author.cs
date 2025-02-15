@@ -7,7 +7,7 @@ namespace BookStore.Domain.Model;
 /// </summary>
 public class Author
 {
-    // <summary>
+    /// <summary>
     /// Идентификатор автора
     /// </summary>
     [Key]
