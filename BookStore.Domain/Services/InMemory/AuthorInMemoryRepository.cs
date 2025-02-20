@@ -8,12 +8,38 @@ namespace BookStore.Domain.Services.InMemory;
 public class AuthorInMemoryRepository : IAuthorRepository
 {
     private List<Author> _authors;
+    private List<Book> _books;
+    private List<BookAuthor> _bookAuthors;
+    /// <summary>
+    /// Конструктор репозитория
+    /// </summary>
     public AuthorInMemoryRepository()
     {
         _authors = DataSeeder.Authors;
+        _books = DataSeeder.Books;
+        _bookAuthors = DataSeeder.BookAuthors;
+
+        foreach (var ba in _bookAuthors)
+        {
+            ba.Author = _authors.FirstOrDefault(a => a.Id == ba.AuthorId);
+            ba.Book = _books.FirstOrDefault(a => a.Id == ba.BookId);
+        }
+
+        foreach (var b in _books)
+        {
+            b.BookAuthors = [];
+            b.BookAuthors?.AddRange(_bookAuthors.Where(ba => ba.BookId == b.Id));
+        }
+
+        foreach (var a in _authors)
+        {
+            a.BookAuthors = [];
+            a.BookAuthors?.AddRange(_bookAuthors.Where(ba => ba.AuthorId == a.Id));
+        }
     }
 
-    public bool Add(Author entity)
+    /// <inheritdoc/>
+    public Task<Author> Add(Author entity)
     {
         try
         {
@@ -21,15 +47,17 @@ public class AuthorInMemoryRepository : IAuthorRepository
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return Task.FromResult(entity);
     }
-    public bool Delete(int key)
+
+    /// <inheritdoc/>
+    public async Task<bool> Delete(int key)
     {
         try
         {
-            var author = Get(key);
+            var author = await Get(key);
             if (author != null)
                 _authors.Remove(author);
         }
@@ -39,27 +67,34 @@ public class AuthorInMemoryRepository : IAuthorRepository
         }
         return true;
     }
-    public bool Update(Author entity)
+
+    /// <inheritdoc/>
+    public async Task<Author> Update(Author entity)
     {
         try
         {
-            Delete(entity.Id);
-            Add(entity);
+            await Delete(entity.Id);
+            await Add(entity);
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return entity;
     }
-    public Author? Get(int key) =>
-        _authors.FirstOrDefault(item => item.Id == key);
-    public IList<Author> GetAll() =>
-        _authors;
 
-    public IList<Tuple<string, int>> GetLast5AuthorsBook(int key)
+    /// <inheritdoc/>
+    public Task<Author?> Get(int key) =>
+        Task.FromResult(_authors.FirstOrDefault(item => item.Id == key));
+
+    /// <inheritdoc/>
+    public Task<IList<Author>> GetAll() =>
+        Task.FromResult((IList<Author>)_authors);
+
+    /// <inheritdoc/>
+    public async Task<IList<Tuple<string, int>>> GetLast5AuthorsBook(int key)
     {
-        var author = Get(key);
+        var author = await Get(key);
         var books = new List<Book>();
         if (author != null && author.BookAuthors?.Count > 0)
             foreach (var bs in author.BookAuthors)
@@ -72,11 +107,12 @@ public class AuthorInMemoryRepository : IAuthorRepository
             .ToList();
     }
 
-    public IList<Tuple<string, int>> GetTop5AuthorsByPageCount() =>
-        _authors
+    /// <inheritdoc/>
+    public Task<IList<Tuple<string, int>>> GetTop5AuthorsByPageCount() =>
+        Task.FromResult((IList<Tuple<string, int>>)_authors
             .OrderByDescending(author => author.GetPageCount())
             .Take(5)
             .Select(author => new Tuple<string, int>(author.ToString(), author.GetPageCount() ?? 0))
-            .ToList();
+            .ToList());
 
 }

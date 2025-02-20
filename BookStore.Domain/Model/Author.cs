@@ -36,7 +36,7 @@ public class Author
     /// <summary>
     /// Список работ
     /// </summary>
-    public virtual List<BookAuthor>? BookAuthors { get; set; } = [];
+    public virtual List<BookAuthor>? BookAuthors { get; set; } 
 
     /// <summary>
     /// Число работ

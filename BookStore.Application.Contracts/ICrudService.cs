@@ -15,7 +15,7 @@ public interface ICrudService<TDto, TCreateUpdateDto, TKey>
     /// </summary>
     /// <param name="newDto">Dto для апдейта сущности</param>
     /// <returns>Индикатор успешности операции</returns>
-    public bool Create(TCreateUpdateDto newDto);
+    public Task<TDto> Create(TCreateUpdateDto newDto);
 
     /// <summary>
     /// Обновление существующей сущности
@@ -23,25 +23,25 @@ public interface ICrudService<TDto, TCreateUpdateDto, TKey>
     /// <param name="key">Идентификатор сущности</param>
     /// <param name="newDto">Dto для апдейта сущности</param>
     /// <returns>Индикатор успешности операции</returns>
-    public bool Update(TKey key, TCreateUpdateDto newDto);
+    public Task<TDto> Update(TKey key, TCreateUpdateDto newDto);
 
     /// <summary>
     /// Удаление сущности
     /// </summary>
     /// <param name="id">Идентификатор сущности</param>
     /// <returns>Индикатор успешности операции</returns>
-    public bool Delete(TKey id);
+    public Task<bool> Delete(TKey id);
 
     /// <summary>
     /// Получение коллекции всех сущностей
     /// </summary>
     /// <returns>Коллекция сущностей</returns>
-    public IList<TDto> GetList();
+    public Task<IList<TDto>> GetList();
 
     /// <summary>
     /// Получение сущности по идентификатору
     /// </summary>
     /// <param name="id">Идентификатор сущности</param>
     /// <returns>Сущность</returns>
-    public TDto? GetById(TKey id);
+    public Task<TDto?> GetById(TKey id);
 }
