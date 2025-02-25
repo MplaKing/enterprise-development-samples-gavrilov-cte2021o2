@@ -12,39 +12,35 @@ namespace BookStore.Application.Services;
 /// <param name="mapper">Автомаппер</param>
 public class AuthorCrudService(IAuthorRepository repository, IMapper mapper) : ICrudService<AuthorDto, AuthorCreateUpdateDto, int>, IAnalyticsService
 {
-    public bool Create(AuthorCreateUpdateDto newDto)
+    public async Task<AuthorDto> Create(AuthorCreateUpdateDto newDto)
     {
         var newAuthor = mapper.Map<Author>(newDto);
-        newAuthor.Id = repository.GetAll().Max(x => x.Id) + 1;
-        var result = repository.Add(newAuthor);
-        return result;
+        var res = await repository.Add(newAuthor);
+        return mapper.Map<AuthorDto>(res);
     }
 
-    public bool Delete(int id) =>
-        repository.Delete(id);
+    public async Task<bool> Delete(int id) =>
+        await repository.Delete(id);
 
-    public AuthorDto? GetById(int id)
+    public async Task<AuthorDto?> GetById(int id)
     {
-        var author = repository.Get(id);
+        var author = await repository.Get(id);
         return mapper.Map<AuthorDto>(author);
     }
 
-    public IList<AuthorDto> GetList() =>
-        mapper.Map<List<AuthorDto>>(repository.GetAll());
+    public async Task<IList<AuthorDto>> GetList() =>
+        mapper.Map<List<AuthorDto>>(await repository.GetAll());
 
-    public bool Update(int key, AuthorCreateUpdateDto newDto)
+    public async Task<AuthorDto> Update(int key, AuthorCreateUpdateDto newDto)
     {
-        var oldAuthor = repository.Get(key);
         var newAuthor = mapper.Map<Author>(newDto);
-        newAuthor.Id = key;
-        newAuthor.BookAuthors = oldAuthor?.BookAuthors;
-        var result = repository.Update(newAuthor);
-        return result;
+        await repository.Update(newAuthor);
+        return mapper.Map<AuthorDto>(newAuthor);
     }
 
-    public IList<Tuple<string, int>> GetTop5AuthorsByPageCount() =>
-        repository.GetTop5AuthorsByPageCount();
+    public async Task<IList<Tuple<string, int>>> GetTop5AuthorsByPageCount() =>
+        await repository.GetTop5AuthorsByPageCount();
 
-    public IList<Tuple<string, int>> GetLast5AuthorsBook(int key) =>
-        repository.GetLast5AuthorsBook(key);
+    public async Task<IList<Tuple<string, int>>> GetLast5AuthorsBook(int key) =>
+        await repository.GetLast5AuthorsBook(key);
 }

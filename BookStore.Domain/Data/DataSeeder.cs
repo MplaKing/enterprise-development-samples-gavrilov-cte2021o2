@@ -7,6 +7,9 @@ namespace BookStore.Domain.Data;
 /// </summary>
 public static class DataSeeder
 {
+    /// <summary>
+    /// Коллекция изданий, использующаяся для первичного наполнения базы данных (и инмемори репозиториев)
+    /// </summary>
     public static readonly List<Book> Books =
         [
             new()
@@ -66,6 +69,10 @@ public static class DataSeeder
                 PageCount = 240
             },
         ];
+
+    /// <summary>
+    /// Коллекция авторов, использующаяся для первичного наполнения базы данных (и инмемори репозиториев)
+    /// </summary>
     public static readonly List<Author> Authors =
         [
             new()
@@ -87,6 +94,10 @@ public static class DataSeeder
                 LastName = "Карр",
             },
         ];
+
+    /// <summary>
+    /// Коллекция свзей авторов и изданий, использующаяся для первичного наполнения базы данных (и инмемори репозиториев)
+    /// </summary>
     public static readonly List<BookAuthor> BookAuthors =
         [
             new()
@@ -138,19 +149,4 @@ public static class DataSeeder
                 AuthorId = 2,
             },
         ];
-
-    static DataSeeder()
-    {
-        foreach (var ba in BookAuthors)
-        {
-            ba.Author = Authors.FirstOrDefault(a => a.Id == ba.AuthorId);
-            ba.Book = Books.FirstOrDefault(a => a.Id == ba.BookId);
-        }
-
-        foreach (var b in Books)
-            b.BookAuthors?.AddRange(BookAuthors.Where(ba => ba.BookId == b.Id));
-
-        foreach (var a in Authors)
-            a.BookAuthors?.AddRange(BookAuthors.Where(ba => ba.AuthorId == a.Id));
-    }
 }
