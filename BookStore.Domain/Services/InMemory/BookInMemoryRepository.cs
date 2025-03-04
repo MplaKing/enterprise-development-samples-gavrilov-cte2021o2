@@ -8,12 +8,16 @@ namespace BookStore.Domain.Services.InMemory;
 public class BookInMemoryRepository : IRepository<Book, int>
 {
     private List<Book> _books;
+    /// <summary>
+    /// Конструктор репозитория
+    /// </summary>
     public BookInMemoryRepository()
     {
         _books = DataSeeder.Books;
     }
 
-    public bool Add(Book entity)
+    /// <inheritdoc/>
+    public Task<Book> Add(Book entity)
     {
         try
         {
@@ -21,16 +25,17 @@ public class BookInMemoryRepository : IRepository<Book, int>
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return Task.FromResult(entity);
     }
 
-    public bool Delete(int key)
+    /// <inheritdoc/>
+    public async Task<bool> Delete(int key)
     {
         try
         {
-            var book = Get(key);
+            var book = await Get(key);
             if (book != null)
                 _books.Remove(book);
         }
@@ -41,23 +46,26 @@ public class BookInMemoryRepository : IRepository<Book, int>
         return true;
     }
 
-    public Book? Get(int key) =>
-        _books.FirstOrDefault(item => item.Id == key);
+    /// <inheritdoc/>
+    public Task<Book?> Get(int key) =>
+        Task.FromResult(_books.FirstOrDefault(item => item.Id == key));
 
-    public IList<Book> GetAll() =>
-        _books;
+    /// <inheritdoc/>
+    public Task<IList<Book>> GetAll() =>
+        Task.FromResult((IList<Book>)_books);
 
-    public bool Update(Book entity)
+    /// <inheritdoc/>
+    public async Task<Book> Update(Book entity)
     {
         try
         {
-            Delete(entity.Id);
-            Add(entity);
+            await Delete(entity.Id);
+            await Add(entity);
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return entity;
     }
 }

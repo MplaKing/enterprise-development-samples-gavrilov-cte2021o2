@@ -17,8 +17,8 @@ public class AnalyticsController(IAnalyticsService service): ControllerBase
     /// <returns>Список из кортежей (автор, число страниц)</returns>
     [HttpGet("Top5Authors")]
     [ProducesResponseType(200)]
-    public ActionResult<List<Tuple<string, int>>> GetTop5Authors() =>
-        Ok(service.GetTop5AuthorsByPageCount());
+    public async Task<ActionResult<List<Tuple<string, int>>>> GetTop5Authors() =>
+        Ok(await service.GetTop5AuthorsByPageCount());
 
     /// <summary>
     /// Получение последних 5 книг выборанного автора
@@ -27,6 +27,6 @@ public class AnalyticsController(IAnalyticsService service): ControllerBase
     /// <returns>Список из кортежей (книга, год выпуска)</returns>
     [HttpGet("Last5Books/{id}")]
     [ProducesResponseType(200)]
-    public ActionResult<List<Tuple<string,int>>> GetLast5Books(int id) =>
-        Ok(service.GetLast5AuthorsBook(id));
+    public async Task<ActionResult<List<Tuple<string,int>>>> GetLast5Books(int id) =>
+        Ok(await service.GetLast5AuthorsBook(id));
 }

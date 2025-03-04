@@ -10,11 +10,11 @@ public interface IAuthorRepository : IRepository<Author, int>
     /// Метод для вывода 5 наиболее продуктивных авторов по числу написанных страниц
     /// </summary>
     /// <returns>Список кортежей с ФИО автора и числом страниц</returns>
-    IList<Tuple<string, int>> GetTop5AuthorsByPageCount();
+    Task<IList<Tuple<string, int>>> GetTop5AuthorsByPageCount();
 
     /// <summary>
     /// Метод для вывода последних 5 выпущенных автором работ
     /// </summary>
     /// <returns></returns>
-    IList<Tuple<string, int>> GetLast5AuthorsBook(int key);
+    Task<IList<Tuple<string, int>>> GetLast5AuthorsBook(int key);
 }

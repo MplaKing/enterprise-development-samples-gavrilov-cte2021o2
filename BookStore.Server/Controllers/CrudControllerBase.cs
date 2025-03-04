@@ -25,12 +25,12 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public IActionResult Create(TCreateUpdateDto newDto)
+    public async Task<ActionResult<TDto>> Create(TCreateUpdateDto newDto)
     {
         try
         {
-            var res = crudService.Create(newDto);
-            return res ? Ok() : StatusCode(400);
+            var res = await crudService.Create(newDto);
+            return res != null ? Ok(res) : StatusCode(400);
         }
         catch (Exception ex)
         {
@@ -47,12 +47,12 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
-    public IActionResult Edit(TKey id, TCreateUpdateDto newDto)
+    public async Task<ActionResult<TDto>> Edit(TKey id, TCreateUpdateDto newDto)
     {
         try
         {
-            var res = crudService.Update(id, newDto);
-            return res ? Ok() : StatusCode(400);
+            var res = await crudService.Update(id, newDto);
+            return res != null ? Ok(res) : StatusCode(400);
         }
         catch (Exception ex)
         {
@@ -72,7 +72,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     {
         try
         {
-            var res = crudService.Delete(id);
+            var res = await crudService.Delete(id);
             return res ? Ok() : NoContent();
         }
         catch (Exception ex)
@@ -88,11 +88,11 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<IList<TDto>> GetAll()
+    public async Task<ActionResult<IList<TDto>>> GetAll()
     {
         try
         {
-            var res = crudService.GetList();
+            var res = await crudService.GetList();
             return Ok(res);
         }
         catch (Exception ex)
@@ -110,11 +110,11 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Get(TKey id)
+    public async Task<ActionResult<TDto>> Get(TKey id)
     {
         try
         {
-            var res = crudService.GetById(id);
+            var res = await crudService.GetById(id);
             return res != null ? Ok(res) : NoContent();
         }
         catch (Exception ex)

@@ -1,13 +1,15 @@
 using AutoMapper;
 using BookStore.Application;
+using BookStore.Application.Contracts;
 using BookStore.Application.Contracts.Author;
 using BookStore.Application.Contracts.Book;
 using BookStore.Application.Contracts.BookAuthor;
-using BookStore.Application.Contracts;
 using BookStore.Application.Services;
-using BookStore.Domain.Services;
 using BookStore.Domain.Model;
-using BookStore.Domain.Services.InMemory;
+using BookStore.Domain.Services;
+using BookStore.Infractructure.EfCore.Services;
+using BookStore.Infrastructure.EfCore;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,9 +26,9 @@ var mapperConfig = new MapperConfiguration(config => config.AddProfile(new AutoM
 IMapper? mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-builder.Services.AddSingleton<IRepository<Book, int>,BookInMemoryRepository>();
-builder.Services.AddSingleton<IAuthorRepository, AuthorInMemoryRepository>();
-builder.Services.AddSingleton<IRepository<BookAuthor, int>, BookAuthorInMemoryRepository>();
+builder.Services.AddTransient<IRepository<Book, int>, BookEfCoreRepository>();
+builder.Services.AddTransient<IAuthorRepository, AuthorEfCoreRepository>();
+builder.Services.AddTransient<IRepository<BookAuthor, int>, BookAuthorEfCoreRepository>();
 
 builder.Services.AddScoped<ICrudService<BookDto, BookCreateUpdateDto, int>, BookCrudService>();
 builder.Services.AddScoped<ICrudService<AuthorDto, AuthorCreateUpdateDto, int>, AuthorCrudService>();

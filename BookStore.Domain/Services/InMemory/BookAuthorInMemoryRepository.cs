@@ -8,11 +8,16 @@ namespace BookStore.Domain.Services.InMemory;
 public class BookAuthorInMemoryRepository : IRepository<BookAuthor, int>
 {
     private List<BookAuthor> _bookAuthors;
+    /// <summary>
+    /// Конструктор репозитория
+    /// </summary>
     public BookAuthorInMemoryRepository()
     {
-        _bookAuthors = DataSeeder.BookAuthors;
+        _bookAuthors = DataSeeder.BookAuthors; 
     }
-    public bool Add(BookAuthor entity)
+
+    /// <inheritdoc/>
+    public Task<BookAuthor> Add(BookAuthor entity)
     {
         try
         {
@@ -20,16 +25,17 @@ public class BookAuthorInMemoryRepository : IRepository<BookAuthor, int>
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return Task.FromResult(entity);
     }
 
-    public bool Delete(int key)
+    /// <inheritdoc/>
+    public async Task<bool> Delete(int key)
     {
         try
         {
-            var bookAuthor = Get(key);
+            var bookAuthor = await Get(key);
             if (bookAuthor != null)
                 _bookAuthors.Remove(bookAuthor);
         }
@@ -40,23 +46,26 @@ public class BookAuthorInMemoryRepository : IRepository<BookAuthor, int>
         return true;
     }
 
-    public BookAuthor? Get(int key) =>
-        _bookAuthors.FirstOrDefault(item => item.Id == key);
+    /// <inheritdoc/>
+    public Task<BookAuthor?> Get(int key) =>
+        Task.FromResult(_bookAuthors.FirstOrDefault(item => item.Id == key));
 
-    public IList<BookAuthor> GetAll() =>
-        _bookAuthors;
+    /// <inheritdoc/>
+    public Task<IList<BookAuthor>> GetAll() =>
+        Task.FromResult((IList<BookAuthor>)_bookAuthors);
 
-    public bool Update(BookAuthor entity)
+    /// <inheritdoc/>
+    public async Task<BookAuthor> Update(BookAuthor entity)
     {
         try
         {
-            Delete(entity.Id);
-            Add(entity);
+            await Delete(entity.Id);
+            await Add(entity);
         }
         catch
         {
-            return false;
+            return null!;
         }
-        return true;
+        return entity;
     }
 }
