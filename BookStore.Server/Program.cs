@@ -38,6 +38,8 @@ builder.Services.AddScoped<IAnalyticsService, AuthorCrudService>();
 builder.Services.AddDbContextFactory<BookStoreDbContext>(options =>
     options.UseLazyLoadingProxies().UseMySql(builder.Configuration.GetConnectionString("MySql"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("MySql"))));
 
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy => { policy.WithOrigins("http://localhost:5244"); policy.AllowAnyMethod(); policy.AllowAnyHeader(); }));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -47,6 +49,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthorization();
+
+app.UseCors();
 
 app.MapControllers();
 
