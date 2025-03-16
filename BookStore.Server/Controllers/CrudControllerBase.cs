@@ -68,7 +68,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(ICrudServ
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<bool>> Delete(TKey id)
+    public async Task<IActionResult> Delete(TKey id)
     {
         try
         {
